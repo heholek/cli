@@ -74,7 +74,9 @@ func TestPRCreate(t *testing.T) {
 	fg, teardown := initFakeGitCommand()
 	defer teardown()
 
-	fg.StubExec("TestPrCreateHelperProcess", "clean")
+	fg.StubExec("TestPrCreateHelperProcess", "clean")    // status
+	fg.StubExec("TestPrCreateHelperProcess", "multiple") // log
+	fg.StubExec("TestPrCreateHelperProcess", "")         // push
 
 	output, err := RunCommand(prCreateCmd, `pr create -t "my title" -b "my body"`)
 	eq(t, err, nil)
