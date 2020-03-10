@@ -24,7 +24,15 @@ func TestPrCreateHelperProcess(*testing.T) {
 	args := test.GetTestHelperProcessArgs()
 	switch args[1] {
 	case "log":
-		fmt.Println("123,cool,\"\"")
+		switch args[0] {
+		case "one":
+			fmt.Println("123,cool")
+		case "multiple":
+			fmt.Println("123,cool story")
+			fmt.Println("666,gnarly times")
+			fmt.Println("420,a long title for no real \"reason\". i guess, i should, put commas,")
+		case "none":
+		}
 	case "status":
 		switch args[0] {
 		case "clean":
@@ -42,6 +50,17 @@ func TestPrCreateHelperProcess(*testing.T) {
 	os.Exit(0)
 }
 
+// TODO put somewhere else
+func initFakeGitCommand() (*test.FakeExecer, func()) {
+	fe := &test.FakeExecer{}
+	origGitCommand := git.GitCommand
+	git.GitCommand = fe.StubbedExec
+
+	return fe, func() {
+		git.GitCommand = origGitCommand
+	}
+}
+
 func TestPRCreate(t *testing.T) {
 	initBlankContext("OWNER/REPO", "feature")
 	http := initFakeHTTP()
@@ -52,11 +71,10 @@ func TestPRCreate(t *testing.T) {
 		} } } }
 	`))
 
-	origGitCommand := git.GitCommand
-	git.GitCommand = test.StubExecCommand("TestPrCreateHelperProcess", "clean")
-	defer func() {
-		git.GitCommand = origGitCommand
-	}()
+	fg, teardown := initFakeGitCommand()
+	defer teardown()
+
+	fg.StubExec("TestPrCreateHelperProcess", "clean")
 
 	output, err := RunCommand(prCreateCmd, `pr create -t "my title" -b "my body"`)
 	eq(t, err, nil)
