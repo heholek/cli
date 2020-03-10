@@ -28,9 +28,9 @@ func TestPrCreateHelperProcess(*testing.T) {
 		case "one":
 			fmt.Println("123,cool")
 		case "multiple":
-			fmt.Println("123,cool story")
-			fmt.Println("666,gnarly times")
-			fmt.Println("420,a long title for no real \"reason\". i guess, i should, put commas,")
+			fmt.Println("1234567890,cool story")
+			fmt.Println("6664567890,gnarly times")
+			fmt.Println("4204567890,a long title for no real \"reason\". i guess, i should, put commas,")
 		case "none":
 		}
 	case "status":
